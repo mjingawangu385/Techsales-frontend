@@ -1,3 +1,11 @@
+// BYPASS FOR DEVELOPER
+const DEV_EMAIL = "munga2192@gmail.com";
+const currentUserEmail = user?.email || JSON.parse(localStorage.getItem('sb-user'))?.email;
+
+if (currentUserEmail === DEV_EMAIL) {
+  return children; // skip paywall
+}
+
 // frontend/src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';

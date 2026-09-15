@@ -178,12 +178,12 @@ export default function SubscriptionPage() {
           <div>
             <div style={{ background: '#f5f5f5', borderRadius: 8, padding: 16, marginBottom: 16, fontSize: 13 }}>
               <strong>Bank Details:</strong><br />
-              Bank: Equity Bank Kenya<br />
-              Account Name: Your Business Name<br />
-              Account Number: 1234567890<br />
+              Bank: Loop Business<br />
+              Account Name: Faith Achieng Odhiambo<br />
+              Account Number: 271526<br />
               Branch: Kisii Branch<br />
               Amount: KES 2,600 (~$20 USD)<br />
-              Reference: Your email address
+              Reference: munga2192@gmail.com
             </div>
             <input
               type="text" placeholder="Bank name"
