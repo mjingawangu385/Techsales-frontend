@@ -60,11 +60,11 @@ export function AuthProvider({ children }) {
   }
 
   const isSubscribed =
-    profile?.subscription_status === 'active' ||
-    (profile?.subscription_status === 'trial' &&
-      profile?.subscription_expires_at &&
-      new Date(profile.subscription_expires_at) > new Date());
-
+  profile?.subscription_status === 'owner' ||
+  profile?.subscription_status === 'active' ||
+  (profile?.subscription_status === 'trial' &&
+    profile?.subscription_expires_at &&
+    new Date(profile.subscription_expires_at) > new Date());
   return (
     <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, isSubscribed, fetchProfile }}>
       {children}
