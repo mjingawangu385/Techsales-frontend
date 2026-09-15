@@ -21,9 +21,18 @@ import Layout from './components/Layout';
 
 function ProtectedRoute({ children }) {
   const { user, loading, isSubscribed } = useAuth();
-  if (loading) return <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'100vh',fontSize:18}}>Loading...</div>;
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: 18 }}>
+        Loading...
+      </div>
+    );
+  }
+
   if (!user) return <Navigate to="/login" />;
   if (!isSubscribed) return <Navigate to="/subscribe" />;
+
   return children;
 }
 
