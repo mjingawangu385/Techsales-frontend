@@ -35,21 +35,19 @@ export function AuthProvider({ children }) {
   }
 
   async function signUp(email, password, fullName, businessName) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } },
-    });
-    if (!error && data.user) {
-      await supabase.from('profiles').update({
-        full_name: fullName,
-        business_name: businessName,
-        subscription_status: 'trial',
-        subscription_expires_at: new Date(Date.now() + 14 * 86400000).toISOString(),
-      }).eq('id', data.user.id);
-    }
-    return { data, error };
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } },
+  });
+  if (!error && data.user) {
+    await supabase.from('profiles').update({
+      full_name: fullName,
+      business_name: businessName,
+    }).eq('id', data.user.id);
   }
+  return { data, error };
+}
 
   async function signIn(email, password) {
     return supabase.auth.signInWithPassword({ email, password });
