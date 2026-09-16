@@ -1,4 +1,3 @@
-
 // frontend/src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -13,28 +12,32 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import Layout from './components/Layout';
 
 function ProtectedRoute({ children }) {
-  const { user, loading, isSubscribed } = useAuth();
+  const { user, profile, loading, isSubscribed } = useAuth();
 
   if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: 18 }}>
-        Loading...
-      </div>
-    );
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
   }
-
-  if (!user) return <Navigate to="/login" />;
-  if (!isSubscribed) return <Navigate to="/subscribe" />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!profile) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading profile...</div>;
+  if (!isSubscribed) return <Navigate to="/subscribe" replace />;
 
   return children;
 }
 
+function PublicRoute({ children }) {
+  const { user, profile, loading, isSubscribed } = useAuth();
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+  if (user && profile) {
+    return isSubscribed ? <Navigate to="/" replace /> : <Navigate to="/subscribe" replace />;
+  }
+  return children;
+}
+
 function AppRoutes() {
-  const { user } = useAuth();
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
-      <Route path="/signup" element={user ? <Navigate to="/" /> : <SignupPage />} />
+      <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+      <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
       <Route path="/subscribe" element={<SubscriptionPage />} />
       <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />

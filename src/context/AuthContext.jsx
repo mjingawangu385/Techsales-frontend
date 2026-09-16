@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../utils/supabase'; // if your file is in lib/ change to ../lib/supabase
+import { supabase } from '../utils/supabase';
 
 const AuthContext = createContext({});
 export const useAuth = () => useContext(AuthContext);
@@ -30,8 +30,8 @@ export function AuthProvider({ children }) {
   async function fetchProfile(userId) {
     try {
       const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
-      if (error) {
-        // if no profile, create one
+      if (error || !data) {
+        // create profile if missing
         const { data: { user: authUser } } = await supabase.auth.getUser();
         if (authUser) {
           const isAdmin = authUser.email === 'munga2192@gmail.com';
@@ -42,41 +42,41 @@ export function AuthProvider({ children }) {
             subscription_expires_at: isAdmin ? '2099-12-31 23:59:59+00' : new Date(Date.now() + 14*24*60*60*1000).toISOString()
           }]).select().single();
           setProfile(newProfile);
+          return;
         }
-      } else {
-        setProfile(data);
       }
+      setProfile(data);
     } catch (e) {
-      console.error('fetchProfile', e);
+      console.error(e);
     } finally {
       setLoading(false);
     }
   }
 
   async function signUp(email, password) {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    return { data, error };
+    return await supabase.auth.signUp({ email, password });
   }
-
   async function signIn(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    return { data, error };
+    return await supabase.auth.signInWithPassword({ email, password });
   }
-
   async function signOut() {
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
-    localStorage.removeItem('sb-ywufvnyrzbjdaezjrjdj-auth-token');
   }
 
   const ADMIN_EMAIL = 'munga2192@gmail.com';
+  const now = new Date();
+  const expiresAt = profile?.subscription_expires_at ? new Date(profile.subscription_expires_at) : null;
+  const notExpired = expiresAt ? expiresAt > now : false;
+
   const isOwner = profile?.subscription_status === 'owner' || user?.email === ADMIN_EMAIL;
-  const isActive = profile?.subscription_status === 'active' && profile?.subscription_expires_at && new Date(profile.subscription_expires_at) > new Date();
-  const isSubscribed = isOwner || isActive;
+  const isActive = profile?.subscription_status === 'active' && notExpired;
+  const isTrial = profile?.subscription_status === 'trial' && notExpired;
+  const isSubscribed = isOwner || isActive || isTrial;
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, isOwner, isSubscribed, isActive }}>
+    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, isOwner, isSubscribed, isActive, isTrial }}>
       {children}
     </AuthContext.Provider>
   );
