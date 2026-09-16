@@ -46,7 +46,7 @@ export default function Layout() {
         <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
           <div style={{ fontSize: 13, fontWeight: 500 }}>{profile?.full_name}</div>
           <div style={{ fontSize: 11, opacity: 0.6, marginBottom: 12 }}>
-  {profile?.subscription_status === 'owner' ? '👑 Owner' : profile?.subscription_status === 'active' ? '✅ Active' : profile?.subscription_status === 'trial' ? '⏳ Trial' : '❌ Expired'}
+  {profile?.subscription_status === 'owner' ? '👑 Owner' : profile?.subscription_status === 'active' ? '✅ Active' : profile?.subscription_status === 'trial' ? '⏳ Trial' : ''}
 </div>
           <button onClick={handleSignOut}
             style={{ width: '100%', padding: '8px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 13 }}>
